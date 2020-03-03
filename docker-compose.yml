@@ -1,0 +1,48 @@
+version: '3'
+services:
+    bankapp:
+        build: bankapp/
+        ports:
+            - "8080:8080"
+        depends_on:
+            - database
+        networks:
+          mydb-network:
+            aliases:
+                - bankapp-alias
+        environment:
+            WAIT_HOSTS: db:3306
+            WAIT_BEFORE_HOSTS: 5
+
+        environment:
+            - SPRING_DATASOURCE_URL=jdbc:mysql://database-alias/bankapp_db?useSSL=false&allowPublicKeyRetrieval=true
+            - SPRING_DATASOURCE_USERNAME=maxkile
+            - SPRING_DATASOURCE_PASSWORD=maxkile 
+    adminer:
+        image: adminer:latest
+        ports:
+            - "8081:8080"   
+        networks:
+          mydb-network:
+            aliases:
+               - admire-alias
+    database:
+        image: mysql:8.0.19
+        hostname: db
+        restart: always
+        ports:
+            - "3306:3306"
+        networks:
+          mydb-network:
+            aliases:
+                - database-alias     
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: bankapp_db
+            MYSQL_USER: maxkile
+            MYSQL_PASSWORD: maxkile
+            
+networks:
+    mydb-network:
+     
+            
